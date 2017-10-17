@@ -1,7 +1,7 @@
 {
   "name": "sfcc",
-  "version": "0.1.0",
-  "description": "Command line tools to ease development on Salesforce Commerce Cloud",
+  "version": "0.1.1",
+  "description": "Command line tool to ease development on Salesforce Commerce Cloud",
   "author": "Johan Li",
   "license": "MIT",
   "main": "index.js",
