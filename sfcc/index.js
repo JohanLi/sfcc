@@ -2,6 +2,8 @@ const xml2js = require('xml2js');
 const decompress = require('decompress');
 const fs = require('fs');
 const rimraf = require('rimraf');
+const babel = require('babel-core');
+const es2015 = require('babel-preset-es2015');
 
 const { promisify } = require('util');
 
@@ -20,6 +22,8 @@ const latestFirst = (a, b) => {
 
   return bTimestamp - aTimestamp;
 };
+
+const leadingZero = input => (`0${input}`).slice(-2);
 
 const sfcc = {
   checkEnv: () => {
@@ -56,6 +60,26 @@ const sfcc = {
 
     await webdav.remove(`${codeVersion}.zip`);
     fs.unlinkSync(`${codeVersion}.zip`);
+  },
+
+  watch: (codeVersion) => {
+    fs.watch('./cartridges', { recursive: true }, async (eventType, filename) => {
+      if (filename.substr(-3) === '.js') {
+        const { code } = babel.transformFileSync(`./cartridges/${filename}`, {
+          presets: [es2015],
+        });
+
+        await webdav.upload(
+          `./${codeVersion}/${filename}`,
+          code,
+        );
+
+        const now = new Date();
+        const timestamp = `${leadingZero(now.getHours())}:${leadingZero(now.getMinutes())}:${leadingZero(now.getSeconds())}`;
+
+        console.log(`Uploaded /cartridges/${filename} into ${codeVersion} (at ${timestamp})`);
+      }
+    });
   },
 };
 

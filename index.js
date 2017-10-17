@@ -6,6 +6,21 @@ const fs = require('fs');
 
 const sfcc = require('./sfcc/');
 
+const detectCodeVersion = async () => {
+  console.log(`Attempting to detect code versions on ${process.env.SFCC_DOMAIN}`);
+
+  const codeVersions = await sfcc.codeVersions();
+
+  const answers = await inquirer.prompt({
+    type: 'list',
+    name: 'codeVersion',
+    message: 'Select the code version to import:',
+    choices: codeVersions,
+  });
+
+  return answers.codeVersion;
+};
+
 program
   .command('import [codeVersion]')
   .description(`
@@ -17,18 +32,7 @@ program
       sfcc.checkEnv();
 
       if (!codeVersion) {
-        console.log(`Attempting to detect code versions on ${process.env.SFCC_DOMAIN}`);
-
-        const codeVersions = await sfcc.codeVersions();
-
-        const answers = await inquirer.prompt({
-          type: 'list',
-          name: 'codeVersion',
-          message: 'Select the code version to import:',
-          choices: codeVersions,
-        });
-
-        codeVersion = answers.codeVersion;
+        codeVersion = await detectCodeVersion();
       }
 
       if (fs.existsSync('./cartridges')) {
@@ -44,6 +48,23 @@ program
       }
 
       await sfcc.import(codeVersion);
+    } catch (error) {
+      console.log(error.message);
+    }
+  });
+
+program
+  .command('watch [codeVersion]')
+  .description('Watch file changes in /cartridges, and upload into the specified code version')
+  .action(async (codeVersion) => {
+    try {
+      sfcc.checkEnv();
+
+      if (!codeVersion) {
+        codeVersion = await detectCodeVersion();
+      }
+
+      sfcc.watch(codeVersion);
     } catch (error) {
       console.log(error.message);
     }

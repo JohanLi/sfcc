@@ -27,5 +27,7 @@ The username and password of a business manager account with the Administrator r
 
 ## Commands
 
-* sfcc import
-* sfcc import &lt;codeVersion&gt;
+* **sfcc import**
+* **sfcc import &lt;codeVersion&gt;**
+* **sfcc watch**
+* **sfcc watch &lt;codeVersion&gt;**

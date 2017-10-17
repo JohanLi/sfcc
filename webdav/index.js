@@ -4,9 +4,7 @@ const webdav = {
   upload: async (filePath, file) => request({
     uri: filePath,
     method: 'PUT',
-    form: {
-      data: file,
-    },
+    body: file,
   }),
 
   download: async filePath => request({
