@@ -1,0 +1,44 @@
+{
+  "name": "sfcc",
+  "version": "0.1.0",
+  "description": "Command line tools to ease development on Salesforce Commerce Cloud",
+  "author": "Johan Li",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint ./ --ext .js"
+  },
+  "bin": {
+    "sfcc": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/npm/npm.git"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "dependencies": {
+    "commander": "^2.11.0",
+    "decompress": "^4.2.0",
+    "dotenv": "^4.0.0",
+    "inquirer": "^3.3.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "rimraf": "^2.6.2",
+    "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0"
+  },
+  "eslintConfig": {
+    "extends": "airbnb",
+    "env": {
+      "node": true
+    }
+  }
+}
