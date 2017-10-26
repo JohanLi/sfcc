@@ -1,13 +1,16 @@
 # sfcc
 
 This is a command line tool to ease development on Salesforce Commerce Cloud (SFCC), an e-commerce framework.
-As it's a platform-as-a-service, development cannot be done locally. Another drawback is that SFCC doesn't currently
-support ES6 syntax, as it uses [Rhino](http://mozilla.github.io/rhino/compat/engines.html).
+It's a work-in-progress, and currently supports:
 
-This tool lets you import your cartridges from an instance, and will allow you to watch and sync local changes
-to a sandbox instance.
+* importing your cartridges from an instance
+* watch and sync local changes to a sandbox instance
 
-This tool also intends to let you write ES6 syntax as well as use SASS in your SFCC projects.
+You can use **ES6 syntax**, such as arrow functions, as your code will be transpiled to ES5 by Babel.
+You can also change **SASS files**, as this tool will compile them using node-sass and then sync the
+resulting CSS files.
+
+If you want specific features, drop me an email at [johan@johanli.com](mailto:johan@johanli.com).
 
 ## Setup
 
@@ -31,3 +34,7 @@ The username and password of a business manager account with the Administrator r
 * **sfcc import &lt;codeVersion&gt;**
 * **sfcc watch**
 * **sfcc watch &lt;codeVersion&gt;**
+
+## Issues
+
+You need to prepend a _ to the filename of all .scss files inside **cartridges/sfcc_core/cartridge/scss/default/lib/flag-icon-css**.
