@@ -47,10 +47,11 @@ Don't forget to update `SFCC_DOMAIN` as well, which should be a URL of the form 
 
 ## Commands
 
-* **sfcc import**
-* **sfcc import &lt;codeVersion&gt;**
-* **sfcc watch**
-* **sfcc watch &lt;codeVersion&gt;**
+* **sfcc import [codeVersion]**
+* **sfcc watch [codeVersion]**
+* **sfcc deploy [codeVersion]**
+
+Omitting codeVersion will prompt you to select from code versions on the server.
 
 ## Issues
 

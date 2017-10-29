@@ -70,4 +70,27 @@ program
     }
   });
 
+program
+  .command('deploy [codeVersion]')
+  .description('Deploy /cartridges to a specified, new code version')
+  .action(async (codeVersion) => {
+    try {
+      sfcc.checkEnv();
+
+      if (!codeVersion) {
+        const answers = await inquirer.prompt({
+          type: 'input',
+          name: 'codeVersion',
+          message: 'Name the code version of this deploy:',
+        });
+
+        codeVersion = answers.codeVersion;
+      }
+
+      sfcc.deploy(codeVersion);
+    } catch (error) {
+      console.log(error.message);
+    }
+  });
+
 program.parse(process.argv);

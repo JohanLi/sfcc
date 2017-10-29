@@ -1,5 +1,5 @@
 node_modules/
 .idea/
 .env
-.p12
+*.p12
 .DS_Store

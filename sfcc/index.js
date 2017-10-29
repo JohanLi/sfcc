@@ -7,6 +7,7 @@ const babel = require('babel-core');
 const es2015 = require('babel-preset-es2015');
 const glob = require('glob');
 const sass = require('node-sass');
+const zip = require('./zip');
 
 const { promisify } = require('util');
 
@@ -123,6 +124,15 @@ const sfcc = {
 
       console.log(`Uploaded /cartridges/${filename} into ${codeVersion} (at ${timestamp})`);
     }
+  },
+
+  deploy: async (codeVersion) => {
+    await zip(codeVersion);
+
+    await webdav.upload('./deploy.zip', fs.readFileSync('./deploy.zip'));
+    await webdav.unzip('./deploy.zip');
+    await webdav.remove('./deploy.zip');
+    fsExtra.removeSync('./deploy.zip');
   },
 };
 
