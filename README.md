@@ -14,6 +14,8 @@ If you want specific features, drop me an email at [johan@johanli.com](mailto:jo
 
 ## Setup
 
+### For sandbox instances
+
 ```
 npm install sfcc -g
 ```
@@ -21,12 +23,27 @@ npm install sfcc -g
 Create a `.env` file in the root directory of your project, containing the following variables:
 
 ```
-SFCC_DOMAIN=mysandbox.demandware.net
+SFCC_DOMAIN=sandbox-web-customer.demandware.net
 SFCC_USERNAME=username
 SFCC_PASSWORD=password
 ```
 
 The username and password of a business manager account with the Administrator role (with WebDAV permissions) needs to be used.
+
+### For staging
+
+If you are deploying to staging, you also need to generate a .p12 file. This is outlined in the "Using Two-Factor Authentication
+for Code Deployment" section in the Salesforce Commerce Cloud documentation. Place the .p12 file in the root directory,
+and add the following variables:
+
+```
+SFCC_CERTIFICATE=certificate.p12
+SFCC_CERTIFICATE_PASSPHRASE=passphrase
+```
+
+Don't forget to update `SFCC_DOMAIN` as well, which should be a URL of the form cert.staging.web.customer.demandware.net.
+
+`SFCC_CERTIFICATE_PASSPHRASE` is optional and can be left out.
 
 ## Commands
 
