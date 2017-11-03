@@ -1,7 +1,6 @@
 const xml2js = require('xml2js');
 const decompress = require('decompress');
-const fs = require('fs');
-const fsExtra = require('fs-extra');
+const fs = require('fs-extra');
 const rimraf = require('rimraf');
 const babel = require('babel-core');
 const es2015 = require('babel-preset-es2015');
@@ -64,7 +63,7 @@ const sfcc = {
     await decompress(`${codeVersion}.zip`, 'cartridges', { strip: 1 });
 
     await webdav.remove(`${codeVersion}.zip`);
-    fs.unlinkSync(`${codeVersion}.zip`);
+    fs.removeSync(`${codeVersion}.zip`);
   },
 
   watch: (codeVersion) => {
@@ -106,7 +105,7 @@ const sfcc = {
           .replace(/\/cartridge\/scss\/([^/]+)\//, '/cartridge/static/$1/css/')
           .replace(/.scss$/, '.css');
 
-        fsExtra.outputFileSync(cssFilepath, result.css);
+        fs.outputFileSync(cssFilepath, result.css);
       });
     }
   },
@@ -132,7 +131,7 @@ const sfcc = {
     await webdav.upload('./deploy.zip', fs.readFileSync('./deploy.zip'));
     await webdav.unzip('./deploy.zip');
     await webdav.remove('./deploy.zip');
-    fsExtra.removeSync('./deploy.zip');
+    fs.removeSync('./deploy.zip');
   },
 };
 
