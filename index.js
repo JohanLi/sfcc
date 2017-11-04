@@ -14,7 +14,7 @@ const detectCodeVersion = async () => {
   const answers = await inquirer.prompt({
     type: 'list',
     name: 'codeVersion',
-    message: 'Select the code version to import:',
+    message: 'Select the code version:',
     choices: codeVersions,
   });
 
@@ -29,17 +29,19 @@ program
   `)
   .action(async (codeVersion) => {
     try {
+      let selectedCodeVersion;
+
       sfcc.checkEnv();
 
       if (!codeVersion) {
-        codeVersion = await detectCodeVersion();
+        selectedCodeVersion = await detectCodeVersion();
       }
 
       if (fs.existsSync('./cartridges')) {
         const answers = await inquirer.prompt({
           type: 'confirm',
           name: 'confirm',
-          message: `Importing ${codeVersion} will remove what you currently have in /cartridges. Is this OK?`,
+          message: `Importing ${selectedCodeVersion} will remove what you currently have in /cartridges. Is this OK?`,
         });
 
         if (!answers.confirm) {
@@ -47,7 +49,7 @@ program
         }
       }
 
-      await sfcc.import(codeVersion);
+      await sfcc.import(codeVersion || selectedCodeVersion);
     } catch (error) {
       console.log(error.message);
     }
@@ -58,13 +60,15 @@ program
   .description('Watch file changes in /cartridges, and upload into the specified code version')
   .action(async (codeVersion) => {
     try {
+      let selectedCodeVersion;
+
       sfcc.checkEnv();
 
       if (!codeVersion) {
-        codeVersion = await detectCodeVersion();
+        selectedCodeVersion = await detectCodeVersion();
       }
 
-      sfcc.watch(codeVersion);
+      sfcc.watch(codeVersion || selectedCodeVersion);
     } catch (error) {
       console.log(error.message);
     }
@@ -75,6 +79,8 @@ program
   .description('Deploy /cartridges to a specified, new code version')
   .action(async (codeVersion) => {
     try {
+      let selectedCodeVersion;
+
       sfcc.checkEnv();
 
       if (!codeVersion) {
@@ -84,10 +90,10 @@ program
           message: 'Name the code version of this deploy:',
         });
 
-        codeVersion = answers.codeVersion;
+        selectedCodeVersion = answers.codeVersion;
       }
 
-      sfcc.deploy(codeVersion);
+      sfcc.deploy(codeVersion || selectedCodeVersion);
     } catch (error) {
       console.log(error.message);
     }

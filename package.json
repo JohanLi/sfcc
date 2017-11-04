@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint ./ --ext .js"
+    "lint": "eslint ./index.js ./sfcc ./webdav --ext .js"
   },
   "bin": {
     "sfcc": "index.js"

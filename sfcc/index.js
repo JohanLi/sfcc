@@ -46,7 +46,7 @@ const sfcc = {
 
     propfind = propfind.multistatus.response.filter((response) => {
       const prop = response.propstat[0].prop[0];
-      const isDirectory = prop.resourcetype[0].hasOwnProperty('collection');
+      const isDirectory = Object.prototype.hasOwnProperty.call(prop.resourcetype[0], 'collection');
       const notRoot = prop.displayname[0] !== '';
 
       return isDirectory && notRoot;
