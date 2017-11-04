@@ -28,7 +28,12 @@ const latestFirst = (a, b) => {
   return bTimestamp - aTimestamp;
 };
 
-const leadingZero = input => (`0${input}`).slice(-2);
+const timestamp = () => {
+  const leadingZero = input => (`0${input}`).slice(-2);
+  const now = new Date();
+
+  return `${leadingZero(now.getHours())}:${leadingZero(now.getMinutes())}:${leadingZero(now.getSeconds())}`;
+};
 
 const toCodeVersion = (path, codeVersion) => path.replace(/^cartridges/, codeVersion);
 
@@ -71,6 +76,10 @@ const sfcc = {
 
   watch: (codeVersion) => {
     chokidar.watch('./cartridges', { ignoreInitial: true }).on('all', (event, path) => {
+      if (path.substr(-9) === 'jb_tmp___') {
+        return;
+      }
+
       if (event === 'add' || event === 'change') {
         sfcc.uploadJs(codeVersion, path);
         sfcc.compileSass(path);
@@ -79,10 +88,12 @@ const sfcc = {
 
       if (event === 'unlink' || event === 'unlinkDir') {
         webdav.remove(toCodeVersion(path, codeVersion));
+        console.log(`Removed ${path} from ${codeVersion} at ${timestamp()}`);
       }
 
       if (event === 'addDir') {
         webdav.addDir(toCodeVersion(path, codeVersion));
+        console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
       }
     });
   },
@@ -98,10 +109,7 @@ const sfcc = {
         code,
       );
 
-      const now = new Date();
-      const timestamp = `${leadingZero(now.getHours())}:${leadingZero(now.getMinutes())}:${leadingZero(now.getSeconds())}`;
-
-      console.log(`Uploaded ${path} into ${codeVersion} (at ${timestamp})`);
+      console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
     }
   },
 
@@ -130,10 +138,7 @@ const sfcc = {
         fs.readFileSync(path),
       );
 
-      const now = new Date();
-      const timestamp = `${leadingZero(now.getHours())}:${leadingZero(now.getMinutes())}:${leadingZero(now.getSeconds())}`;
-
-      console.log(`Uploaded ${path} into ${codeVersion} (at ${timestamp})`);
+      console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
     }
   },
 

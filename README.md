@@ -1,10 +1,11 @@
-# sfcc
+# sfcc (Salesforce Commerce Cloud)
 
-This is a command line tool to ease development on Salesforce Commerce Cloud (SFCC), an e-commerce framework.
-It's a work-in-progress, and currently supports:
+This is a command line tool to ease development on Salesforce Commerce Cloud (Demandware before its acquisition),
+an e-commerce framework. It's a work-in-progress, and currently supports:
 
 * importing your cartridges from an instance
-* watch and sync local changes to a sandbox instance
+* watching and syncing local changes to a sandbox instance
+* deploying your cartridges to a specified code version
 
 You can use **ES6 syntax**, such as arrow functions, as your code will be transpiled to ES5 by Babel.
 You can also change **SASS files**, as this tool will compile them using node-sass and then sync the
@@ -13,8 +14,6 @@ resulting CSS files.
 If you want specific features, drop me an email at [johan@johanli.com](mailto:johan@johanli.com).
 
 ## Setup
-
-### For sandbox instances
 
 ```
 npm install sfcc -g
@@ -32,9 +31,9 @@ The username and password of a business manager account with the Administrator r
 
 ### For staging
 
-If you are deploying to staging, you also need to generate a .p12 file. This is outlined in the "Using Two-Factor Authentication
-for Code Deployment" section in the Salesforce Commerce Cloud documentation. Place the .p12 file in the root directory,
-and add the following variables:
+If you are deploying to staging rather than a sandbox instance, you also need to generate a .p12 file. This is outlined in
+the "Using Two-Factor Authentication for Code Deployment" section in the Salesforce Commerce Cloud documentation.
+Place the .p12 file in the root directory, and add the following variables:
 
 ```
 SFCC_CERTIFICATE=certificate.p12
