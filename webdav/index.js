@@ -7,6 +7,11 @@ const webdav = {
     body: file,
   }),
 
+  addDir: async filePath => request({
+    uri: filePath,
+    method: 'MKCOL',
+  }),
+
   download: async filePath => request({
     uri: filePath,
     method: 'GET',

@@ -1,6 +1,7 @@
 const xml2js = require('xml2js');
 const decompress = require('decompress');
 const fs = require('fs-extra');
+const chokidar = require('chokidar');
 const rimraf = require('rimraf');
 const babel = require('babel-core');
 const es2015 = require('babel-preset-es2015');
@@ -28,6 +29,8 @@ const latestFirst = (a, b) => {
 };
 
 const leadingZero = input => (`0${input}`).slice(-2);
+
+const toCodeVersion = (path, codeVersion) => path.replace(/^cartridges/, codeVersion);
 
 const sfcc = {
   checkEnv: () => {
@@ -67,33 +70,43 @@ const sfcc = {
   },
 
   watch: (codeVersion) => {
-    fs.watch('./cartridges', { recursive: true }, async (eventType, filename) => {
-      sfcc.uploadJs(codeVersion, filename);
-      sfcc.compileSass(filename);
-      sfcc.uploadCss(codeVersion, filename);
+    chokidar.watch('./cartridges', { ignoreInitial: true }).on('all', (event, path) => {
+      if (event === 'add' || event === 'change') {
+        sfcc.uploadJs(codeVersion, path);
+        sfcc.compileSass(path);
+        sfcc.uploadCss(codeVersion, path);
+      }
+
+      if (event === 'unlink' || event === 'unlinkDir') {
+        webdav.remove(toCodeVersion(path, codeVersion));
+      }
+
+      if (event === 'addDir') {
+        webdav.addDir(toCodeVersion(path, codeVersion));
+      }
     });
   },
 
-  uploadJs: async (codeVersion, filename) => {
-    if (filename.substr(-3) === '.js') {
-      const { code } = babel.transformFileSync(`./cartridges/${filename}`, {
+  uploadJs: async (codeVersion, path) => {
+    if (path.substr(-3) === '.js') {
+      const { code } = babel.transformFileSync(path, {
         presets: [es2015],
       });
 
       await webdav.upload(
-        `./${codeVersion}/${filename}`,
+        toCodeVersion(path, codeVersion),
         code,
       );
 
       const now = new Date();
       const timestamp = `${leadingZero(now.getHours())}:${leadingZero(now.getMinutes())}:${leadingZero(now.getSeconds())}`;
 
-      console.log(`Uploaded /cartridges/${filename} into ${codeVersion} (at ${timestamp})`);
+      console.log(`Uploaded ${path} into ${codeVersion} (at ${timestamp})`);
     }
   },
 
-  compileSass: async (filename) => {
-    if (filename.substr(-5) === '.scss') {
+  compileSass: async (path) => {
+    if (path.substr(-5) === '.scss') {
       const files = await globAsync('./cartridges/**/!(_)*.scss');
 
       files.forEach((sassFilepath) => {
@@ -110,18 +123,17 @@ const sfcc = {
     }
   },
 
-  uploadCss: async (codeVersion, filename) => {
-    if (filename.substr(-4) === '.css') {
-      console.log(`./${codeVersion}/${filename}`);
+  uploadCss: async (codeVersion, path) => {
+    if (path.substr(-4) === '.css') {
       await webdav.upload(
-        `./${codeVersion}/${filename}`,
-        fs.readFileSync(`./cartridges/${filename}`),
+        toCodeVersion(path, codeVersion),
+        fs.readFileSync(path),
       );
 
       const now = new Date();
       const timestamp = `${leadingZero(now.getHours())}:${leadingZero(now.getMinutes())}:${leadingZero(now.getSeconds())}`;
 
-      console.log(`Uploaded /cartridges/${filename} into ${codeVersion} (at ${timestamp})`);
+      console.log(`Uploaded ${path} into ${codeVersion} (at ${timestamp})`);
     }
   },
 
