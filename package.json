@@ -1,6 +1,6 @@
 {
   "name": "sfcc",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Command line tool to ease development on Salesforce Commerce Cloud",
   "author": "Johan Li",
   "license": "MIT",

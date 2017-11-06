@@ -51,7 +51,7 @@ program
 
       await sfcc.import(codeVersion || selectedCodeVersion);
     } catch (error) {
-      console.log(error.message);
+      sfcc.handleError(error);
     }
   });
 
@@ -70,7 +70,7 @@ program
 
       sfcc.watch(codeVersion || selectedCodeVersion);
     } catch (error) {
-      console.log(error.message);
+      sfcc.handleError(error);
     }
   });
 
@@ -95,7 +95,7 @@ program
 
       sfcc.deploy(codeVersion || selectedCodeVersion);
     } catch (error) {
-      console.log(error.message);
+      sfcc.handleError(error);
     }
   });
 

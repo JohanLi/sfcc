@@ -75,27 +75,33 @@ const sfcc = {
   },
 
   watch: (codeVersion) => {
-    chokidar.watch('./cartridges', { ignoreInitial: true }).on('all', (event, path) => {
-      if (path.substr(-9) === 'jb_tmp___') {
-        return;
-      }
+    chokidar
+      .watch('./cartridges', { ignoreInitial: true })
+      .on('all', async (event, path) => {
+        try {
+          if (path.substr(-9) === 'jb_tmp___') {
+            return;
+          }
 
-      if (event === 'add' || event === 'change') {
-        sfcc.uploadJs(codeVersion, path);
-        sfcc.compileSass(path);
-        sfcc.uploadCss(codeVersion, path);
-      }
+          if (event === 'add' || event === 'change') {
+            await sfcc.uploadJs(codeVersion, path);
+            await sfcc.compileSass(path);
+            await sfcc.uploadCss(codeVersion, path);
+          }
 
-      if (event === 'unlink' || event === 'unlinkDir') {
-        webdav.remove(toCodeVersion(path, codeVersion));
-        console.log(`Removed ${path} from ${codeVersion} at ${timestamp()}`);
-      }
+          if (event === 'unlink' || event === 'unlinkDir') {
+            await webdav.remove(toCodeVersion(path, codeVersion));
+            console.log(`Removed ${path} from ${codeVersion} at ${timestamp()}`);
+          }
 
-      if (event === 'addDir') {
-        webdav.addDir(toCodeVersion(path, codeVersion));
-        console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
-      }
-    });
+          if (event === 'addDir') {
+            await webdav.addDir(toCodeVersion(path, codeVersion));
+            console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
+          }
+        } catch (error) {
+          sfcc.handleError(error, path);
+        }
+      });
   },
 
   uploadJs: async (codeVersion, path) => {
@@ -149,6 +155,19 @@ const sfcc = {
     await webdav.unzip('./deploy.zip');
     await webdav.remove('./deploy.zip');
     fs.removeSync('./deploy.zip');
+  },
+
+  handleError: (error, path) => {
+    if (error.statusCode === 401) {
+      console.log('Authentication failed, please check your .env file');
+      process.exit();
+    } else if (error.statusCode === 404) {
+      if (error.options.method === 'DELETE') {
+        console.log(`Attempting to delete ${path} failed, as it doesn't seem available on the server`);
+      }
+    } else {
+      console.log(error.message);
+    }
   },
 };
 
