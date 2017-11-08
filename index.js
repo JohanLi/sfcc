@@ -93,7 +93,7 @@ program
         selectedCodeVersion = answers.codeVersion;
       }
 
-      sfcc.deploy(codeVersion || selectedCodeVersion);
+      await sfcc.deploy(codeVersion || selectedCodeVersion);
     } catch (error) {
       sfcc.handleError(error);
     }

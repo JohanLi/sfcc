@@ -7,6 +7,7 @@ const babel = require('babel-core');
 const glob = require('glob');
 const sass = require('node-sass');
 const zip = require('./zip');
+const log = require('./log');
 
 const { promisify } = require('util');
 
@@ -25,13 +26,6 @@ const latestFirst = (a, b) => {
     .getTime();
 
   return bTimestamp - aTimestamp;
-};
-
-const timestamp = () => {
-  const leadingZero = input => (`0${input}`).slice(-2);
-  const now = new Date();
-
-  return `${leadingZero(now.getHours())}:${leadingZero(now.getMinutes())}:${leadingZero(now.getSeconds())}`;
 };
 
 const toCodeVersion = (path, codeVersion) => path.replace(/^cartridges/, codeVersion);
@@ -94,12 +88,12 @@ const sfcc = {
 
           if (event === 'unlink' || event === 'unlinkDir') {
             await webdav.remove(toCodeVersion(path, codeVersion));
-            console.log(`Removed ${path} from ${codeVersion} at ${timestamp()}`);
+            log.timestamp(`Removed ${path} from ${codeVersion}`);
           }
 
           if (event === 'addDir') {
             await webdav.addDir(toCodeVersion(path, codeVersion));
-            console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
+            log.timestamp(`Uploaded ${path} to ${codeVersion}`);
           }
         } catch (error) {
           sfcc.handleError(error, path);
@@ -122,7 +116,7 @@ const sfcc = {
       fs.outputFileSync(cssFilepath, result.css);
     });
 
-    console.log('Compiled all .scss files');
+    log.timestamp('Compiled all .scss files');
   },
 
   transpileAndUploadJs: async (codeVersion, path) => {
@@ -135,7 +129,7 @@ const sfcc = {
       code,
     );
 
-    console.log(`Transpiled and uploaded ${path} to ${codeVersion} at ${timestamp()}`);
+    log.timestamp(`Transpiled and uploaded ${path} to ${codeVersion}`);
   },
 
   upload: async (codeVersion, path) => {
@@ -150,7 +144,7 @@ const sfcc = {
       content,
     );
 
-    console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
+    log.timestamp(`Uploaded ${path} to ${codeVersion}`);
   },
 
   deploy: async (codeVersion) => {
@@ -164,14 +158,14 @@ const sfcc = {
 
   handleError: (error, path) => {
     if (error.statusCode === 401) {
-      console.log('Authentication failed, please check your .env file');
+      log.error('Authentication failed, please check your .env file');
       process.exit();
     } else if (error.statusCode === 404) {
       if (error.options.method === 'DELETE') {
-        console.log(`Attempting to delete ${path} failed, as it doesn't seem available on the server`);
+        log.error(`Attempting to delete ${path} failed, as it doesn't seem available on the server`);
       }
     } else {
-      console.log(error.message);
+      log.error(error.message);
     }
   },
 };
