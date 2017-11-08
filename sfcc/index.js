@@ -83,9 +83,13 @@ const sfcc = {
           }
 
           if (event === 'add' || event === 'change') {
-            await sfcc.uploadJs(codeVersion, path);
-            await sfcc.compileSass(path);
-            await sfcc.uploadCss(codeVersion, path);
+            if (path.substr(-5) === '.scss') {
+              await sfcc.compileSass();
+            } else if (path.substr(-3) === '.js') {
+              await sfcc.transpileAndUploadJs(codeVersion, path);
+            } else {
+              await sfcc.upload(codeVersion, path);
+            }
           }
 
           if (event === 'unlink' || event === 'unlinkDir') {
@@ -103,48 +107,50 @@ const sfcc = {
       });
   },
 
-  uploadJs: async (codeVersion, path) => {
-    if (path.substr(-3) === '.js') {
-      const { code } = babel.transformFileSync(path, {
-        presets: ['env'],
+  compileSass: async () => {
+    const files = await globAsync('./cartridges/**/!(_)*.scss');
+
+    files.forEach((sassFilepath) => {
+      const result = sass.renderSync({
+        file: sassFilepath,
       });
 
-      await webdav.upload(
-        toCodeVersion(path, codeVersion),
-        code,
-      );
+      const cssFilepath = sassFilepath
+        .replace(/\/cartridge\/scss\/([^/]+)\//, '/cartridge/static/$1/css/')
+        .replace(/.scss$/, '.css');
 
-      console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
-    }
+      fs.outputFileSync(cssFilepath, result.css);
+    });
+
+    console.log('Compiled all .scss files');
   },
 
-  compileSass: async (path) => {
-    if (path.substr(-5) === '.scss') {
-      const files = await globAsync('./cartridges/**/!(_)*.scss');
+  transpileAndUploadJs: async (codeVersion, path) => {
+    const { code } = babel.transformFileSync(path, {
+      presets: ['env'],
+    });
 
-      files.forEach((sassFilepath) => {
-        const result = sass.renderSync({
-          file: sassFilepath,
-        });
+    await webdav.upload(
+      toCodeVersion(path, codeVersion),
+      code,
+    );
 
-        const cssFilepath = sassFilepath
-          .replace(/\/cartridge\/scss\/([^/]+)\//, '/cartridge/static/$1/css/')
-          .replace(/.scss$/, '.css');
-
-        fs.outputFileSync(cssFilepath, result.css);
-      });
-    }
+    console.log(`Transpiled and uploaded ${path} to ${codeVersion} at ${timestamp()}`);
   },
 
-  uploadCss: async (codeVersion, path) => {
-    if (path.substr(-4) === '.css') {
-      await webdav.upload(
-        toCodeVersion(path, codeVersion),
-        fs.readFileSync(path),
-      );
+  upload: async (codeVersion, path) => {
+    let content = fs.readFileSync(path);
 
-      console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
+    if (content.byteLength === 0) {
+      content = '';
     }
+
+    await webdav.upload(
+      toCodeVersion(path, codeVersion),
+      content,
+    );
+
+    console.log(`Uploaded ${path} to ${codeVersion} at ${timestamp()}`);
   },
 
   deploy: async (codeVersion) => {
