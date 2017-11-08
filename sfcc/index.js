@@ -4,7 +4,6 @@ const fs = require('fs-extra');
 const chokidar = require('chokidar');
 const rimraf = require('rimraf');
 const babel = require('babel-core');
-const es2015 = require('babel-preset-es2015');
 const glob = require('glob');
 const sass = require('node-sass');
 const zip = require('./zip');
@@ -107,7 +106,7 @@ const sfcc = {
   uploadJs: async (codeVersion, path) => {
     if (path.substr(-3) === '.js') {
       const { code } = babel.transformFileSync(path, {
-        presets: [es2015],
+        presets: ['env'],
       });
 
       await webdav.upload(
