@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const chokidar = require('chokidar');
 const rimraf = require('rimraf');
 const babel = require('babel-core');
+const env = require('babel-preset-env');
 const glob = require('glob');
 const sass = require('node-sass');
 const zip = require('./zip');
@@ -121,7 +122,7 @@ const sfcc = {
 
   transpileAndUploadJs: async (codeVersion, path) => {
     const { code } = babel.transformFileSync(path, {
-      presets: ['env'],
+      presets: [env],
     });
 
     await webdav.upload(
