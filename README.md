@@ -54,4 +54,5 @@ Omitting codeVersion will prompt you to select from code versions on the server.
 
 ## Issues
 
-You need to prepend a _ to the filename of all .scss files inside **cartridges/sfcc_core/cartridge/scss/default/lib/flag-icon-css**.
+If you are starting out with the SiteGenesis codebase, you may need to prepend a _ to
+the filename of all .scss files inside **scss/default/lib/flag-icon-css**.
