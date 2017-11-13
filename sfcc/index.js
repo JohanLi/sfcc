@@ -38,6 +38,8 @@ const sfcc = {
     }
   },
 
+  checkCredentials: () => webdav.propfind('/'),
+
   codeVersions: async () => {
     let propfind = await webdav.propfind('/');
 
@@ -105,12 +107,12 @@ const sfcc = {
   compileSass: async () => {
     const files = await globAsync('./cartridges/**/!(_)*.scss');
 
-    files.forEach((sassFilepath) => {
+    files.forEach((scssFilepath) => {
       const result = sass.renderSync({
-        file: sassFilepath,
+        file: scssFilepath,
       });
 
-      const cssFilepath = sassFilepath
+      const cssFilepath = scssFilepath
         .replace(/\/cartridge\/scss\/([^/]+)\//, '/cartridge/static/$1/css/')
         .replace(/.scss$/, '.css');
 
@@ -149,12 +151,48 @@ const sfcc = {
   },
 
   deploy: async (codeVersion) => {
+    await sfcc.build();
     await zip(codeVersion);
 
     await webdav.upload('./deploy.zip', fs.readFileSync('./deploy.zip'));
     await webdav.unzip('./deploy.zip');
     await webdav.remove('./deploy.zip');
     fs.removeSync('./deploy.zip');
+    fs.removeSync('./deploy');
+
+    log.timestamp(`Successfully deployed ${codeVersion}!`);
+  },
+
+  build: async () => {
+    fs.copySync('./cartridges', './deploy');
+
+    const jsFiles = await globAsync('./deploy/**/!(_)*.js');
+
+    jsFiles.forEach((jsFilepath) => {
+      const { code } = babel.transformFileSync(jsFilepath, {
+        presets: [env],
+      });
+
+      fs.outputFileSync(jsFilepath, code);
+    });
+
+    log.timestamp('Transpiled all .js files');
+
+    const scssFiles = await globAsync('./deploy/**/!(_)*.scss');
+
+    scssFiles.forEach((scssFilepath) => {
+      const result = sass.renderSync({
+        file: scssFilepath,
+      });
+
+      const cssFilepath = scssFilepath
+        .replace(/\/cartridge\/scss\/([^/]+)\//, '/cartridge/static/$1/css/')
+        .replace(/.scss$/, '.css');
+
+      fs.outputFileSync(cssFilepath, result.css);
+    });
+
+    log.timestamp('Compiled all .scss files');
   },
 
   handleError: (error, path) => {

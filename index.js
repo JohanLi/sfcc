@@ -5,6 +5,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 
 const sfcc = require('./sfcc/');
+const { version } = require('./package');
 
 const detectCodeVersion = async () => {
   console.log(`Attempting to detect code versions on ${process.env.SFCC_DOMAIN}`);
@@ -82,6 +83,7 @@ program
       let selectedCodeVersion;
 
       sfcc.checkEnv();
+      await sfcc.checkCredentials();
 
       if (!codeVersion) {
         const answers = await inquirer.prompt({
@@ -99,4 +101,6 @@ program
     }
   });
 
-program.parse(process.argv);
+program
+  .version(version)
+  .parse(process.argv);

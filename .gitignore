@@ -1,6 +1,3 @@
 node_modules/
 .idea/
-cartridges/
-.env
-*.p12
 .DS_Store

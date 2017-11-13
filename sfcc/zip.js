@@ -18,7 +18,7 @@ const zip = codeVersion => new Promise((resolve, reject) => {
   });
 
   archive.pipe(output);
-  archive.directory('./cartridges', codeVersion);
+  archive.directory('./deploy', codeVersion);
   archive.finalize();
 });
 
