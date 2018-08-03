@@ -7,10 +7,10 @@ const babel = require('babel-core');
 const env = require('babel-preset-env');
 const glob = require('glob');
 const sass = require('node-sass');
+const { promisify } = require('util');
+
 const zip = require('./zip');
 const log = require('./log');
-
-const { promisify } = require('util');
 
 const webdav = require('../webdav/');
 require('dotenv').config();

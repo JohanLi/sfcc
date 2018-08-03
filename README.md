@@ -1,5 +1,9 @@
 # sfcc (Salesforce Commerce Cloud)
 
+**This tool has not been maintained since 2017, as I no longer work for an employer that uses Salesforce Commerce Cloud.**
+
+**Thank you to those who have been using it!**
+
 This is a command line tool to ease development on Salesforce Commerce Cloud (Demandware before its acquisition),
 an e-commerce framework. It's a work-in-progress, and currently supports:
 
@@ -10,8 +14,6 @@ an e-commerce framework. It's a work-in-progress, and currently supports:
 You can use **ES6 syntax**, such as arrow functions, as your code will be transpiled to ES5 by Babel.
 You can also change **SASS files**, as this tool will compile them using node-sass and then sync the
 resulting CSS files.
-
-If you want specific features, drop me an email at [johan@johanli.com](mailto:johan@johanli.com).
 
 ## Setup
 

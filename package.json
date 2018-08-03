@@ -1,6 +1,6 @@
 {
   "name": "sfcc",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "Command line tool to ease development on Salesforce Commerce Cloud",
   "author": "Johan Li",
   "license": "MIT",
@@ -21,32 +21,32 @@
     "url": "https://github.com/JohanLi/sfcc.git"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "dependencies": {
-    "archiver": "^2.1.0",
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "chalk": "^2.3.0",
-    "chokidar": "^1.7.0",
-    "commander": "^2.11.0",
+    "archiver": "^2.1.1",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "chalk": "^2.4.1",
+    "chokidar": "^2.0.4",
+    "commander": "^2.16.0",
     "decompress": "^4.2.0",
-    "dotenv": "^4.0.0",
-    "fs-extra": "^4.0.2",
+    "dotenv": "^6.0.0",
+    "fs-extra": "^7.0.0",
     "glob": "^7.1.2",
-    "inquirer": "^3.3.0",
-    "node-sass": "^4.6.0",
-    "request": "^2.83.0",
+    "inquirer": "^6.0.0",
+    "node-sass": "^4.9.2",
+    "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "rimraf": "^2.6.2",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "eslint": "^4.10.0",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-jsx-a11y": "^6.0.2",
-    "eslint-plugin-react": "^7.4.0"
+    "eslint": "^5.2.0",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.10.0"
   },
   "eslintConfig": {
     "extends": "airbnb",
